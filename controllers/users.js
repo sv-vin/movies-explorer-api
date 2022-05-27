@@ -43,19 +43,13 @@ module.exports.createUser = (req, res, next) => {
     email,
     password,
   } = req.body;
-  Users.findOne({ email })
-    .then((user) => {
-      if (user) {
-        next(new ErrorConflict(`Пользователь с таким email ${email} уже зарегистрирован`));
-      }
-      return bcrypt.hash(password, 10);
-    })
+
+  bcrypt.hash(password, 10)
     .then((hash) => Users.create({
       name,
       email,
       password: hash,
     }))
-    .then((user) => Users.findOne({ _id: user._id }))
     .then((user) => {
       res.status(200).send(user);
     })
